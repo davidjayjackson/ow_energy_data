@@ -1,0 +1,52 @@
+---
+Source: Our World In Data
+format: html
+editor: visual
+---
+
+# Libraries
+
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(janitor)
+library(scales)
+```
+
+# Pull  USA Energy Data from Our World in Data Source
+
+```{r}
+energy <- read.csv('energy-data.csv') |> 
+  filter(iso_code =='USA') |> remove_empty(which=c("rows","cols"))
+dim(energy)
+
+```
+
+# Change in Biofuel Consumption 
+
+```{r}
+ggplot(energy) + geom_histogram(aes(x=biofuel_cons_change_pct))
+ggplot(energy) + geom_boxplot(aes(x=biofuel_cons_change_pct))
+```
+```{r}
+energy_clean <- energy %>% filter(!is.na(biofuel_cons_change_pct))
+
+ggplot(energy_clean) + 
+  geom_line(aes(x = year, y = biofuel_cons_change_pct)) +
+  labs(title="Annual percentage change in biofuel consumption ",caption="(Our World In Data)")
+```
+```{r}
+energy_clean <- energy %>% filter(!is.na(biofuel_cons_change_twh))
+
+ggplot(energy_clean) + 
+  geom_line(aes(x = year, y = biofuel_cons_change_twh)) +
+  labs(title="Annual change in biofuel consumption  ",caption="(Our World In Data)")
+```
+
+```{r}
+energy_clean <- energy %>% filter(!is.na(biofuel_cons_per_capita))
+
+ggplot(energy_clean) + 
+  geom_line(aes(x = year, y =biofuel_cons_per_capita)) +
+  labs(title="Biofuel consumption per capita",subtitle="Measured in kilowatt-hours per person.",caption="(Source: Our World In Data)")
+```
